@@ -11,10 +11,10 @@ export async function POST(req: Request) {
 
   // Format messages for Llama chat
   const formattedMessages = messages.map((m: any) => 
-    `${m.role === 'user' ? 'Human: ' : 'Assistant: '}${m.content}`
+    `${m.role === 'user' ? 'User: ' : 'Assistant: '}${m.content}`
   ).join('\n');
   
-  const prompt = `${formattedMessages}\nAssistant:`;
+  const prompt = `${formattedMessages}\nAssistant: `;
 
   const response = await Hf.textGenerationStream({
     model: config.huggingFace.modelId,
@@ -25,7 +25,8 @@ export async function POST(req: Request) {
       top_p: 0.95,
       repetition_penalty: 1.1,
       stream: true,
-      stop: ["Human:", "\nHuman:"],
+      stop: ["User:", "\nUser:", "Assistant:", "\nAssistant:"],
+      do_sample: true,
     },
   });
 
